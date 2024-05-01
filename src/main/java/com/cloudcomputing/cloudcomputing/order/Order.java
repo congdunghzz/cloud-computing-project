@@ -38,10 +38,6 @@ public class Order {
     @Column(name = "TOTAL_COST")
     private double totalCost;
 
-    @Column(name = "ORDER_STATUS")
-    @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus;
-
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "USER_ID")
     @JsonIgnore
