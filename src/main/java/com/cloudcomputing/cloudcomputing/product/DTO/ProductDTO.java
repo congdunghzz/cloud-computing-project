@@ -6,7 +6,6 @@ public record ProductDTO(
         double price,
         int stock,
         String image,
-        String category,
         String business
     ) {
 

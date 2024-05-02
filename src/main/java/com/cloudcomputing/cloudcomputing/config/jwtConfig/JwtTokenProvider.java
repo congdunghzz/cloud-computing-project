@@ -2,7 +2,7 @@ package com.cloudcomputing.cloudcomputing.config.jwtConfig;
 
 
 import com.cloudcomputing.cloudcomputing.ExceptionHandler.JwtException;
-import com.cloudcomputing.cloudcomputing.user.CustomUserDetail;
+import com.cloudcomputing.cloudcomputing.business.CustomUserDetail;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -47,7 +47,7 @@ public class JwtTokenProvider {
     public String generateToken(Map<String, Object> extractClaim, CustomUserDetail userDetails){
         return Jwts.builder()
                 .setClaims(extractClaim)
-                .setSubject(Long.toString(userDetails.getUser().getId()))
+                .setSubject(Long.toString(userDetails.getBusiness().getId()))
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
                 .signWith(SignatureAlgorithm.HS256, getSignInKey())

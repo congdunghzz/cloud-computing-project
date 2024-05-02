@@ -40,15 +40,6 @@ public class ProductController {
     }
 
 
-    @GetMapping("/category")
-    public ResponseEntity<Page<ProductDTO>> getAllProductByCategory(@RequestParam(value ="name", required = false) String name,
-                                                                    @RequestParam(value = "page", required = false) Optional<Integer> page,
-                                                                    @RequestParam(value = "size", required = false) Optional<Integer> size
-    ){
-        return new ResponseEntity<>(
-                productService.getProductByCategory(name,  page.orElse(1), size.orElse(1000)),
-                HttpStatus.OK);
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductDTO> findOne(@PathVariable Long id) {

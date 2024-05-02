@@ -1,14 +1,12 @@
-package com.cloudcomputing.cloudcomputing.user;
+package com.cloudcomputing.cloudcomputing.business;
 
 
-import com.cloudcomputing.cloudcomputing.ExceptionHandler.NotFoundException;
 import com.cloudcomputing.cloudcomputing.ExceptionHandler.UnAuthorizedException;
-import com.cloudcomputing.cloudcomputing.user.DTO.UserDTO;
-import com.cloudcomputing.cloudcomputing.user.DTO.UserRegisterRequest;
+import com.cloudcomputing.cloudcomputing.business.DTO.BusinessDTO;
+import com.cloudcomputing.cloudcomputing.business.DTO.BusinessRegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,64 +17,64 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/user")
-public class UserController {
+@RequestMapping("/api/v1/business")
+public class BusinessController {
     @Autowired
-    private UserService userService;
+    private BusinessService businessService;
 
     @GetMapping
-    public ResponseEntity<List<UserDTO>> getALlUser (){
-        List<UserDTO> userDTOS = userService.getAllUser();
-        return new ResponseEntity<>(userDTOS, HttpStatus.OK);
+    public ResponseEntity<List<BusinessDTO>> getALlUser (){
+        List<BusinessDTO> businessDTOS = businessService.getAllUser();
+        return new ResponseEntity<>(businessDTOS, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getById (@PathVariable Long id){
-        UserDTO userDTO = userService.getById(id);
+    public ResponseEntity<BusinessDTO> getById (@PathVariable Long id){
+        BusinessDTO businessDTO = businessService.getById(id);
 
-        if (userDTO != null){
-            return new ResponseEntity<>(userDTO, HttpStatus.OK);
+        if (businessDTO != null){
+            return new ResponseEntity<>(businessDTO, HttpStatus.OK);
         }else return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/myProfile")
-    public ResponseEntity<UserDTO> getMyProfile (
+    public ResponseEntity<BusinessDTO> getMyProfile (
             @CurrentSecurityContext(expression="authentication") Authentication authentication){
 
         Long userId = null;
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
             CustomUserDetail user = (CustomUserDetail) authentication.getPrincipal();
-            userId = user.getUser().getId();
+            userId = user.getBusiness().getId();
 
         }
 
-        UserDTO userDTO;
+        BusinessDTO businessDTO;
         if (userId != null){
-            userDTO = userService.getById(userId);
+            businessDTO = businessService.getById(userId);
         }else {
             throw new UnAuthorizedException("You have not login yet");
         }
 
-        if (userDTO != null){
-            return new ResponseEntity<>(userDTO, HttpStatus.OK);
+        if (businessDTO != null){
+            return new ResponseEntity<>(businessDTO, HttpStatus.OK);
         }else return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
 
 
     @PutMapping("/myProfile")
-    public ResponseEntity<UserDTO> editInfo(
+    public ResponseEntity<BusinessDTO> editInfo(
             @CurrentSecurityContext(expression="authentication") Authentication authentication,
-            @RequestBody UserRegisterRequest request){
+            @RequestBody BusinessRegisterRequest request){
         Long userId = null;
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
             CustomUserDetail user = (CustomUserDetail) authentication.getPrincipal();
-            userId = user.getUser().getId();
+            userId = user.getBusiness().getId();
 
         }
-        UserDTO updatedUser;
+        BusinessDTO updatedUser;
         if (userId != null){
-            updatedUser = userService.editInfo(userId, request);
+            updatedUser = businessService.editInfo(userId, request);
         }else {
             throw new UnAuthorizedException("You have not login yet");
         }
@@ -92,7 +90,7 @@ public class UserController {
     public ResponseEntity<Map<String,String>> deleteUser(@PathVariable Long id){
         Map<String,String> result = new HashMap<>();
         HttpStatus status;
-        if (userService.deleteUser(id)){
+        if (businessService.deleteUser(id)){
             result.put("message", "deleted");
             status = HttpStatus.ACCEPTED;
         }else {
@@ -102,12 +100,7 @@ public class UserController {
         return new ResponseEntity<>(result, status);
     }
 
-    
-    @PutMapping("/admin/{id}")
-    public ResponseEntity<UserDTO> updateToAdminRole (@PathVariable Long id){
-        UserDTO userDto = userService.changeUserRoleToBusiness(id);
-        return new ResponseEntity<>(userDto, HttpStatus.OK);
-    }
+
 
 
 }

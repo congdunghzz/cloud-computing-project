@@ -1,6 +1,6 @@
 package com.cloudcomputing.cloudcomputing.config.jwtConfig;
 
-import com.cloudcomputing.cloudcomputing.user.UserService;
+import com.cloudcomputing.cloudcomputing.business.BusinessService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +21,7 @@ import java.io.IOException;
 public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    private UserService userService;
+    private BusinessService businessService;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
@@ -45,7 +45,7 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
         Long userId = jwtTokenProvider.extractUserId(jwtToken);
         if (userId != null && jwtTokenProvider.validateToken(jwtToken)){
 
-            UserDetails userDetail = userService.loadUserById(userId);
+            UserDetails userDetail = businessService.loadUserById(userId);
             if (userDetail != null){
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =new UsernamePasswordAuthenticationToken(
                          userDetail, null, userDetail.getAuthorities()

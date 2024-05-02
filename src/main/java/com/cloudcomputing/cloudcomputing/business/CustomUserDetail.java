@@ -1,8 +1,7 @@
-package com.cloudcomputing.cloudcomputing.user;
+package com.cloudcomputing.cloudcomputing.business;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,20 +13,20 @@ import java.util.List;
 @AllArgsConstructor
 public class CustomUserDetail implements UserDetails {
 
-    private User user;
+    private Business business;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(this.user.getRole().name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_BUSINESS"));
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return business.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return business.getEmail();
     }
 
     @Override

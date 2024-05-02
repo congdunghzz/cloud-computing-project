@@ -1,6 +1,6 @@
-package com.cloudcomputing.cloudcomputing.user.DTO;
+package com.cloudcomputing.cloudcomputing.business.DTO;
 
-import com.cloudcomputing.cloudcomputing.user.enums.Gender;
+
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -14,12 +14,12 @@ import java.sql.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserRegisterRequest {
+public class BusinessRegisterRequest {
     private String email;
     private String password;
     private String name;
-    private Gender gender;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern="yyyy-MM-dd")
-    private Date dob;
+    private Date foundingDate;
     private String phone;
 }

@@ -2,9 +2,9 @@ package com.cloudcomputing.cloudcomputing.order;
 
 import com.cloudcomputing.cloudcomputing.ExceptionHandler.UnAuthorizedException;
 import com.cloudcomputing.cloudcomputing.order.DTO.OrderRequest;
-import com.cloudcomputing.cloudcomputing.user.CustomUserDetail;
-import com.cloudcomputing.cloudcomputing.user.UserService;
-import com.cloudcomputing.cloudcomputing.user.enums.UserRole;
+import com.cloudcomputing.cloudcomputing.business.CustomUserDetail;
+import com.cloudcomputing.cloudcomputing.business.BusinessService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ public class OrderController {
     @Autowired
     private final OrderService orderService;
     @Autowired
-    private UserService userService;
+    private BusinessService businessService;
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
@@ -36,8 +36,8 @@ public class OrderController {
         Page<Order> result = orderService.findAll(page.orElse(1), size.orElse(999));
         return ResponseEntity.ok(result);
     }
-    @GetMapping("/user/{id}")
-    public ResponseEntity<List<Order>> findByUser (@PathVariable Long id){
+    @GetMapping("/business/{id}")
+    public ResponseEntity<List<Order>> findByBusiness (@PathVariable Long id){
         List<Order> result = orderService.findAllByUser(id);
 
         return ResponseEntity.ok(result);
@@ -49,14 +49,12 @@ public class OrderController {
         Long userId = null;
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails){
             CustomUserDetail userDetail = (CustomUserDetail) authentication.getPrincipal();
-            userId = userDetail.getUser().getId();
+            userId = userDetail.getBusiness().getId();
         }
         List<Order> result;
         if (userId != null){
 
             result = orderService.findAllByUser(userId);
-
-
         }else {
             throw new UnAuthorizedException("Not login");
         }
@@ -76,14 +74,14 @@ public class OrderController {
         Long userId = null;
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
             CustomUserDetail user = (CustomUserDetail) authentication.getPrincipal();
-            userId = user.getUser().getId();
+            userId = user.getBusiness().getId();
 
         }
 
         Order order;
 
         if (userId != null){
-            order = orderService.createOrder(orderRequest, userId);
+            order = orderService.createOrder(orderRequest);
         }else {
             throw new UnAuthorizedException("You is not permitted to do this action");
         }
@@ -102,18 +100,15 @@ public class OrderController {
         long userId = -1L;
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
             CustomUserDetail user = (CustomUserDetail) authentication.getPrincipal();
-            userId = user.getUser().getId();
+            userId = user.getBusiness().getId();
         }
 
         if (userId == -1L)
             throw new UnAuthorizedException("You are not permitted to do this action");
 
-        if (userService.getById(userId).role() == UserRole.ROLE_BUSINESS){
-            orderService.deleteOrderForBusiness(id);
-            httpStatus = HttpStatus.OK;
-        }else {
-            throw new UnAuthorizedException("You are not permitted to do this action");
-        }
+        orderService.deleteOrderForBusiness(id, userId);
+        httpStatus = HttpStatus.OK;
+
 
         return httpStatus;
     }

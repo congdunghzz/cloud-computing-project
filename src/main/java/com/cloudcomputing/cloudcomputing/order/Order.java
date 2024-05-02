@@ -1,7 +1,7 @@
 package com.cloudcomputing.cloudcomputing.order;
 
 import com.cloudcomputing.cloudcomputing.orderDetail.OrderDetail;
-import com.cloudcomputing.cloudcomputing.user.User;
+import com.cloudcomputing.cloudcomputing.business.Business;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,9 +39,9 @@ public class Order {
     private double totalCost;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "USER_ID")
+    @JoinColumn(name = "BUSINESS_ID")
     @JsonIgnore
-    private User user;
+    private Business business;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetails;

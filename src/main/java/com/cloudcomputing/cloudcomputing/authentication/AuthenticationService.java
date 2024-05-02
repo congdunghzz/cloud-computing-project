@@ -3,11 +3,11 @@ package com.cloudcomputing.cloudcomputing.authentication;
 import com.cloudcomputing.cloudcomputing.ExceptionHandler.ExistException;
 import com.cloudcomputing.cloudcomputing.ExceptionHandler.NotFoundException;
 import com.cloudcomputing.cloudcomputing.config.jwtConfig.JwtTokenProvider;
-import com.cloudcomputing.cloudcomputing.user.CustomUserDetail;
-import com.cloudcomputing.cloudcomputing.user.DTO.UserRegisterRequest;
-import com.cloudcomputing.cloudcomputing.user.User;
-import com.cloudcomputing.cloudcomputing.user.UserRepository;
-import com.cloudcomputing.cloudcomputing.user.enums.UserRole;
+import com.cloudcomputing.cloudcomputing.business.Business;
+import com.cloudcomputing.cloudcomputing.business.CustomUserDetail;
+import com.cloudcomputing.cloudcomputing.business.DTO.BusinessRegisterRequest;
+import com.cloudcomputing.cloudcomputing.business.BusinessRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,41 +19,39 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthenticationService {
 
-    private final UserRepository userRepository;
+    private final BusinessRepository businessRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     @Autowired
-    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
-        this.userRepository = userRepository;
+    public AuthenticationService(BusinessRepository businessRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
+        this.businessRepository = businessRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public AuthenticationResponse createUser(UserRegisterRequest request){
-        if (userRepository.existsByEmail(request.getEmail())){
-            throw new ExistException("user with email: " + request.getEmail()+" have existed");
+    public AuthenticationResponse createBusiness(BusinessRegisterRequest request){
+        if (businessRepository.existsByEmail(request.getEmail())){
+            throw new ExistException("Business with email: " + request.getEmail()+" have existed");
         }
-        User createdUser;
-        User user = User
+        Business createdBusiness;
+        Business business = Business
                 .builder()
                 .name(request.getName())
-                .dob(request.getDob())
-                .gender(request.getGender())
+                .foundingDate(request.getFoundingDate())
                 .phone(request.getPhone())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(UserRole.ROLE_CUSTOMER)
                 .build();
 
 
-            createdUser = userRepository.save(user);
+            createdBusiness = businessRepository.save(business);
 
-            if (createdUser != null){
+            if (createdBusiness != null){
 
-                String token = jwtTokenProvider.generateToken(new CustomUserDetail(createdUser));
-                return new AuthenticationResponse(token, createdUser.getRole().name());
+                String token = jwtTokenProvider.generateToken(new CustomUserDetail(createdBusiness));
+                return new AuthenticationResponse(token);
             }else {
                 throw new NotFoundException("Sign up falsely");
             }
@@ -69,7 +67,7 @@ public class AuthenticationService {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtTokenProvider.generateToken((CustomUserDetail) authentication.getPrincipal());
-        return new AuthenticationResponse(token, ((CustomUserDetail) authentication.getPrincipal()).getUser().getRole().name());
+        return new AuthenticationResponse(token);
     }
 
 }

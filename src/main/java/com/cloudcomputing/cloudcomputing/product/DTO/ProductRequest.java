@@ -7,9 +7,7 @@ public record ProductRequest(
         String name,
         double price,
         int stock,
-        MultipartFile image,
-        String category,
-        String business
+        MultipartFile image
 ){
 
 }
