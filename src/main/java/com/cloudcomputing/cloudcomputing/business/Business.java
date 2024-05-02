@@ -21,7 +21,7 @@ import java.util.List;
 @Entity
 public class Business {
     @Id
-    @Column(name = "USER_ID")
+    @Column(name = "BUSINESS_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

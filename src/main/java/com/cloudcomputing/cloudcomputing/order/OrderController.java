@@ -69,22 +69,11 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<Order> generateOrder(@RequestBody OrderRequest orderRequest,
-                                               @CurrentSecurityContext(expression="authentication") Authentication authentication){
-        Long userId = null;
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            CustomUserDetail user = (CustomUserDetail) authentication.getPrincipal();
-            userId = user.getBusiness().getId();
-
-        }
+    public ResponseEntity<Order> generateOrder(@RequestBody OrderRequest orderRequest){
 
         Order order;
+        order = orderService.createOrder(orderRequest);
 
-        if (userId != null){
-            order = orderService.createOrder(orderRequest);
-        }else {
-            throw new UnAuthorizedException("You is not permitted to do this action");
-        }
         return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
 

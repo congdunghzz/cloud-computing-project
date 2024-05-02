@@ -45,7 +45,7 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build();
 
-
+        System.out.println("Authen service: " + business);
             createdBusiness = businessRepository.save(business);
 
             if (createdBusiness != null){
