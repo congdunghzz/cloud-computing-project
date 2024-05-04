@@ -123,8 +123,7 @@ public class ProductService {
         updatedProduct.setStock(productRequest.stock());
         // check category if it is present
 
-
-        if (updatedProduct.getImage() != null){
+        if (productRequest.image() != null){
             if (productImageService.deleteImg(product.get().getImage())){
                 updatedProduct.setImage(productImageService.addImage(productRequest.image()));
             }

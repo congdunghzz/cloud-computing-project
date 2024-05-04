@@ -36,7 +36,7 @@ public class BusinessService implements UserDetailsService {
     public UserDetails loadUserById(Long id) throws UsernameNotFoundException {
         Optional<Business> user = businessRepository.findById(id);
         if (user.isEmpty()){
-            throw new  UsernameNotFoundException(id.toString());
+            throw new  NotFoundException("Business with id: " + id + " is not found");
         }
         return new CustomUserDetail(user.get());
     }

@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -57,6 +59,13 @@ public class OrderService {
 
     public Order createOrder(OrderRequest request){
 
+        if (request.getBusinessId() == null
+                || request.getAddress() == null
+                || request.getPhone() == null
+                || request.getName() == null
+                || request.getOrderDetailRequestDTOs() == null){
+            throw new NotFoundException("Some field are missing");
+        }
         // check user if it is present
         Optional<Business> business = businessRepository.findById(request.getBusinessId());
         if (business.isEmpty())

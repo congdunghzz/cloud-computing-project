@@ -96,7 +96,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id,
-                                                    @RequestBody ProductRequest productRequest,
+                                                    @ModelAttribute ProductRequest productRequest,
                                                     @CurrentSecurityContext(expression="authentication") Authentication authentication) throws IOException {
         Long businessId = getUserId(authentication);
         ProductDTO result = productService.editProduct(id,productRequest, businessId);
