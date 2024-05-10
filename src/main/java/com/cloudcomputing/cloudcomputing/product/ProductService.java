@@ -82,7 +82,6 @@ public class ProductService {
         Product product = Product.builder()
                 .name(request.name())
                 .price(request.price())
-                .stock(request.stock())
                 .build();
 
 
@@ -120,8 +119,6 @@ public class ProductService {
         Product updatedProduct = product.get();
         updatedProduct.setName(productRequest.name());
         updatedProduct.setPrice(productRequest.price());
-        updatedProduct.setStock(productRequest.stock());
-        // check category if it is present
 
         if (productRequest.image() != null){
             if (productImageService.deleteImg(product.get().getImage())){

@@ -6,7 +6,6 @@ public record ProductRequest(
         Long id,
         String name,
         double price,
-        int stock,
         MultipartFile image
 ){
 

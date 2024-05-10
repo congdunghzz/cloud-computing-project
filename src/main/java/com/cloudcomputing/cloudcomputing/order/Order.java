@@ -26,12 +26,6 @@ public class Order {
     @Column(name = "CUSTOMER_NAME")
     private String name;
 
-    @Column(name = "ORDER_ADDRESS")
-    private String address;
-
-    @Column(name = "CUSTOMER_PHONE")
-    private String phone;
-
     @Column(name = "ORDER_DATE")
     private Date orderDate;
 

@@ -26,12 +26,8 @@ public class Product {
     @Column(name = "PRODUCT_PRICE")
     private double price;
 
-    @Column(name = "PRODUCT_STOCK")
-    private int stock;
-
     @Column(name = "PRODUCT_IMAGE")
     private String image;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "BUSINESS_ID")

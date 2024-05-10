@@ -57,24 +57,20 @@ public class OrderService {
 
 
 
-    public Order createOrder(OrderRequest request){
+    public Order createOrder(OrderRequest request, Long businessId){
 
-        if (request.getBusinessId() == null
-                || request.getAddress() == null
-                || request.getPhone() == null
-                || request.getName() == null
+        if (request.getName() == null
                 || request.getOrderDetailRequestDTOs() == null){
             throw new NotFoundException("Some field are missing");
         }
         // check user if it is present
-        Optional<Business> business = businessRepository.findById(request.getBusinessId());
+        Optional<Business> business = businessRepository.findById(businessId);
         if (business.isEmpty())
-            throw new NotFoundException("Business with id: " +request.getBusinessId()+" was not found");
+            throw new NotFoundException("Business with id: " +businessId+" was not found");
 
         Order newOrder = new Order();
         newOrder.setBusiness(business.get());
         List<OrderDetail> details = new ArrayList<>();
-
         List<Product> products = new ArrayList<>();
         double totalCost = 0;
 
@@ -88,7 +84,9 @@ public class OrderService {
                 throw new NotFoundException("Product with id: " +item.productId()+ " is not found");
             if (!product.get().getBusiness().getName().equals(business.get().getName())){
                 throw new NotFoundException("Business: " +business.get().getName()+ " have no product with name: " + product.get().getName());            }
-
+            if (item.quantity() <= 0){
+                throw new NotFoundException("Please fill the quantity field of Item: " + product.get().getName());
+            }
             products.add(product.get());
 
             totalCost += product.get().getPrice() * item.quantity();
@@ -103,29 +101,10 @@ public class OrderService {
                     .build());
         }
         newOrder.setName(request.getName());
-        newOrder.setAddress(request.getAddress());
-        newOrder.setPhone(request.getPhone());
         newOrder.setOrderDate(new Date(System.currentTimeMillis()));
         newOrder.setTotalCost(totalCost);
         newOrder.setOrderDetails(details);
 
-
-        products.forEach(product -> {
-            int quantityOfItem = 0;
-
-            for (OrderDetailRequestDTO item : request.getOrderDetailRequestDTOs()) {
-
-                if (product.getId().equals(item.productId())){
-                    if (product.getStock() < item.quantity()){
-                        throw new ProductStockException("The product: " + product.getName()+ " is out of stock");
-                    }
-                    quantityOfItem = item.quantity();
-                    break;
-                }
-            }
-            product.setStock(product.getStock() - quantityOfItem);
-            productRepository.save(product);
-        });
         return orderRepository.save(newOrder);
     }
 

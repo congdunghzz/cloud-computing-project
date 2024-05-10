@@ -74,10 +74,15 @@ public class ProductController {
     }
 
     @GetMapping("/business")
-    public ResponseEntity<Page<ProductDTO>> getAllProductByBrand(@RequestParam(value = "name", required = false) String name,
-                                                                 @RequestParam(value = "page", required = false) Optional<Integer> page,
-                                                                 @RequestParam(value = "size", required = false) Optional<Integer> size
+    public ResponseEntity<Page<ProductDTO>> getAllProductByBrand(@RequestParam(value = "page", required = false) Optional<Integer> page,
+                                                                 @RequestParam(value = "size", required = false) Optional<Integer> size,
+                                                                 @CurrentSecurityContext(expression="authentication") Authentication authentication
     ){
+        String name = "";
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            CustomUserDetail user = (CustomUserDetail) authentication.getPrincipal();
+            name = user.getBusiness().getName();
+        }
         return new ResponseEntity<>(
                 productService.getProductByBusiness(name, page.orElse(1), size.orElse(1000)),
                 HttpStatus.OK);

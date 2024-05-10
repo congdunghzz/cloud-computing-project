@@ -14,7 +14,6 @@ public class ProductMapper {
         return new ProductDTO  (product.getId(),
                                 product.getName(),
                                 product.getPrice(),
-                                product.getStock(),
                                 product.getImage(),
                                 product.getBusiness().getName());
     }
