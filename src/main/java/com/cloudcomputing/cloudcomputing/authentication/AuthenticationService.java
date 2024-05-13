@@ -45,13 +45,13 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build();
 
-        System.out.println("Authen service: " + business);
-            createdBusiness = businessRepository.save(business);
+
+        createdBusiness = businessRepository.save(business);
 
             if (createdBusiness != null){
 
                 String token = jwtTokenProvider.generateToken(new CustomUserDetail(createdBusiness));
-                return new AuthenticationResponse(token);
+                return new AuthenticationResponse(token, createdBusiness.getId());
             }else {
                 throw new NotFoundException("Sign up falsely");
             }
@@ -66,8 +66,10 @@ public class AuthenticationService {
                 )
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = jwtTokenProvider.generateToken((CustomUserDetail) authentication.getPrincipal());
-        return new AuthenticationResponse(token);
+        CustomUserDetail user = (CustomUserDetail) authentication.getPrincipal();
+        String token = jwtTokenProvider.generateToken(user);
+
+        return new AuthenticationResponse(token, user.getBusiness().getId());
     }
 
 }

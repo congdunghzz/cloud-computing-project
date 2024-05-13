@@ -93,6 +93,7 @@ public class ProductController {
                                                  @CurrentSecurityContext(expression="authentication") Authentication authentication) throws IOException {
         long userId = getUserId(authentication);
         ProductDTO result = productService.addProduct(userId, request);
+
         if (result != null) {
             return new ResponseEntity<>(result, HttpStatus.CREATED);
         }else return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -105,6 +106,7 @@ public class ProductController {
                                                     @CurrentSecurityContext(expression="authentication") Authentication authentication) throws IOException {
         Long businessId = getUserId(authentication);
         ProductDTO result = productService.editProduct(id,productRequest, businessId);
+
         if (result != null) {
             return new ResponseEntity<>(result, HttpStatus.OK);
         }else return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
