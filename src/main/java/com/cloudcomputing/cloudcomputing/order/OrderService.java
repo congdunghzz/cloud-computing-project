@@ -51,6 +51,9 @@ public class OrderService {
     }
 
     public List<Order> findAllByUser(Long businessId){
+        Optional<Business> business = businessRepository.findById(businessId);
+        if (business.isEmpty())
+            throw new NotFoundException("Business with id: " +businessId+" was not found");
         return orderRepository.findByBusinessIdOrderByOrderDateDesc(businessId);
     }
 
